@@ -153,10 +153,15 @@ Les codes d'erreur métier sont stables et documentés (ne changent pas entre ve
 | `GET` | `/api/v1/vehicles` | Liste des véhicules publiés, filtrable |
 | `GET` | `/api/v1/vehicles/{id}` | Détail d'un véhicule |
 | `GET` | `/api/v1/search` | Recherche transverse (résidences + véhicules) |
-| `POST` | `/api/v1/auth/register` | Création de compte |
+| `POST` | `/api/v1/auth/register` | Création de compte (connecte la session immédiatement) |
 | `POST` | `/api/v1/auth/login` | Connexion |
+| `POST` | `/api/v1/auth/logout` | Déconnexion (tout rôle authentifié) |
 
 Paramètres de filtrage courants sur `/api/v1/search` : `type` (`residence`\|`vehicle`), `city`, `start_date`, `end_date`, `min_price`, `max_price`, `capacity`.
+
+`/api/v1/auth/register` et `/api/v1/auth/login` sont limités à 5 tentatives par minute et
+par adresse IP (voir §13). `/api/v1/auth/logout` n'est accessible qu'authentifié, quel que
+soit le rôle (client, partenaire ou administrateur).
 
 ## 10. Endpoints — Client
 
@@ -167,10 +172,14 @@ Paramètres de filtrage courants sur `/api/v1/search` : `type` (`residence`\|`ve
 | `GET` | `/api/v1/reservations/{id}` | Détail d'une réservation |
 | `POST` | `/api/v1/reservations/{id}/counter-offers/{offerId}/accept` | Accepter une contre-proposition |
 | `POST` | `/api/v1/reservations/{id}/counter-offers/{offerId}/reject` | Refuser une contre-proposition |
-| `GET` | `/api/v1/me` | Profil du client connecté |
+| `GET` | `/api/v1/me` | Profil de l'utilisateur connecté |
 | `PATCH` | `/api/v1/me` | Mise à jour du profil |
 | `GET` | `/api/v1/notifications` | Liste des notifications |
 | `PATCH` | `/api/v1/notifications/{id}/read` | Marquer une notification comme lue |
+
+`GET`/`PATCH /api/v1/me` sont documentés ici par proximité fonctionnelle, mais sont
+communs aux trois rôles authentifiés (client, partenaire, administrateur), contrairement
+au reste des endpoints Client ci-dessus.
 
 ## 11. Endpoints — Partenaire
 

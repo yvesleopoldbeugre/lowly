@@ -34,12 +34,13 @@ use Illuminate\Support\Facades\Route;
 | en complément du groupe `api` déjà appliqué globalement par
 | bootstrap/app.php (throttling, résolution des bindings de route).
 |
-| Les contrôleurs enregistrés ici sont des SQUELETTES DE CONCEPTION : ils
-| retournent tous une réponse 501 pour le moment. La logique métier
+| Les contrôleurs des domaines non encore développés sont des SQUELETTES DE
+| CONCEPTION : ils retournent une réponse 501. La logique métier
 | (Actions/Services par domaine, Policies d'autorisation fine) est
-| implémentée en phase Développement — voir ENGINEERING.md §2 et §5.
-| L'autorisation par rôle (`role:partner`, `role:admin`) est en revanche
-| déjà active au niveau du routage.
+| implémentée domaine par domaine en Phase 1 — voir ROADMAP.md §3 et
+| ENGINEERING.md §2 et §5. Le domaine Identity (auth, profil) est
+| implémenté. L'autorisation par rôle (`role:partner`, `role:admin`) est en
+| revanche déjà active au niveau du routage pour tous les domaines.
 |
 */
 
@@ -51,8 +52,18 @@ Route::middleware('web')->prefix('v1')->name('api.v1.')->group(function () {
     Route::get('vehicles', [VehicleController::class, 'index'])->name('vehicles.index');
     Route::get('vehicles/{vehicle}', [VehicleController::class, 'show'])->name('vehicles.show');
     Route::get('search', [SearchController::class, 'index'])->name('search');
-    Route::post('auth/register', [AuthController::class, 'register'])->name('auth.register');
-    Route::post('auth/login', [AuthController::class, 'login'])->name('auth.login');
+    Route::post('auth/register', [AuthController::class, 'register'])->middleware('throttle:auth')->name('auth.register');
+    Route::post('auth/login', [AuthController::class, 'login'])->middleware('throttle:auth')->name('auth.login');
+
+    // --- Authentifié, tout rôle — voir API_GUIDE.md §9 ----------------------
+    // `me` et `auth/logout` sont communs à client/partner/admin, contrairement
+    // au reste de la section Client ci-dessous (voir docs/engineering §17
+    // checklist avant merge — correctif de routage identifié en Phase 1).
+    Route::middleware('auth')->group(function () {
+        Route::post('auth/logout', [AuthController::class, 'logout'])->name('auth.logout');
+        Route::get('me', [ProfileController::class, 'show'])->name('me.show');
+        Route::patch('me', [ProfileController::class, 'update'])->name('me.update');
+    });
 
     // --- Client — voir API_GUIDE.md §10 -------------------------------------
     Route::middleware(['auth', 'role:client'])->group(function () {
@@ -63,8 +74,6 @@ Route::middleware('web')->prefix('v1')->name('api.v1.')->group(function () {
             ->name('reservations.counter-offers.accept');
         Route::post('reservations/{reservation}/counter-offers/{counterOffer}/reject', [CounterOfferController::class, 'reject'])
             ->name('reservations.counter-offers.reject');
-        Route::get('me', [ProfileController::class, 'show'])->name('me.show');
-        Route::patch('me', [ProfileController::class, 'update'])->name('me.update');
         Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
         Route::patch('notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
     });

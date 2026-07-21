@@ -2,13 +2,14 @@
 
 namespace App\Domains\Identity\Resources;
 
+use App\Domains\Identity\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * Domaine Identity — format conforme à API_GUIDE.md §6.
  *
- * @mixin \App\Domains\Identity\Models\User
+ * @mixin User
  */
 class UserResource extends JsonResource
 {
