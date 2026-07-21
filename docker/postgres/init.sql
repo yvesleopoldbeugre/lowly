@@ -8,3 +8,9 @@
 -- applicatif.
 
 CREATE EXTENSION IF NOT EXISTS btree_gist;
+
+-- Base dédiée aux tests automatisés (phpunit.xml, TESTING.md §5) : isolée de la
+-- base de développement `lowly` pour ne jamais risquer d'écraser des données
+-- locales lors d'une suite de tests. Ce script ne s'exécute qu'une fois, à la
+-- première initialisation du volume Postgres — pas besoin d'idempotence ici.
+CREATE DATABASE lowly_testing;
