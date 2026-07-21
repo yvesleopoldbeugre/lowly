@@ -159,6 +159,16 @@ Les codes d'erreur métier sont stables et documentés (ne changent pas entre ve
 
 Paramètres de filtrage courants sur `/api/v1/search` : `type` (`residence`\|`vehicle`), `city`, `start_date`, `end_date`, `min_price`, `max_price`, `capacity`.
 
+`type` est **obligatoire** sur `/api/v1/search` (422 si absent) : résidences et véhicules
+n'ont pas d'attributs comparables (ville/capacité vs marque/année) ni de clé de tri commune
+en dehors du prix — `GET /residences` et `GET /vehicles` restent disponibles pour parcourir
+chaque catégorie séparément sans filtrer par type. `city`/`capacity` ne s'appliquent qu'aux
+résidences (les véhicules n'ont ni colonne ville ni colonne capacité). `start_date`/`end_date`
+sont **refusés** (422) sur les trois endpoints tant que le domaine Availability n'est pas
+implémenté : les filtrer nécessiterait que `Catalogue` lise `availability_blocks`, ce qui
+inverserait la dépendance de domaine décrite dans `ARCHITECTURE.md` §14 (`Availability`
+dépend de `Catalogue`, jamais l'inverse).
+
 `/api/v1/auth/register` et `/api/v1/auth/login` sont limités à 5 tentatives par minute et
 par adresse IP (voir §13). `/api/v1/auth/logout` n'est accessible qu'authentifié, quel que
 soit le rôle (client, partenaire ou administrateur).
