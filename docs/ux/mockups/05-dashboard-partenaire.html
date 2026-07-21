@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>LOWLY — Tableau de bord Partenaire</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: { extend: { colors: {
+      primary: {50:'#eff6ff',100:'#dbeafe',600:'#2563eb',700:'#1d4ed8',800:'#1e40af'},
+      success: {100:'#dcfce7',700:'#15803d',800:'#166534'},
+      warning: {100:'#fef3c7',700:'#b45309',800:'#92400e'},
+      danger: {100:'#fee2e2',700:'#b91c1c'},
+      neutral: {50:'#fafafa',100:'#f5f5f5',200:'#e5e5e5',300:'#d4d4d4',400:'#a3a3a3',500:'#737373',600:'#525252',700:'#404040',800:'#262626',900:'#171717'},
+    } } }
+  }
+</script>
+</head>
+<body class="bg-neutral-50 text-neutral-900">
+
+  <!-- Maquette UX/UI — voir UX_UI.md §8.5 (écran §6.1 : Tableau de bord Partenaire). -->
+
+  <div class="flex min-h-screen">
+
+    <!-- Navigation latérale — layout app.blade.php, voir docs/engineering/06 §4 -->
+    <aside class="hidden w-56 flex-col border-r border-neutral-200 bg-white p-4 md:flex">
+      <span class="mb-8 px-2 text-lg font-semibold text-primary-700">LOWLY</span>
+      <nav class="flex flex-col gap-1 text-sm">
+        <a class="rounded-md bg-primary-50 px-3 py-2 font-medium text-primary-700" href="#">Tableau de bord</a>
+        <a class="rounded-md px-3 py-2 text-neutral-600 hover:bg-neutral-100" href="#">Résidences</a>
+        <a class="rounded-md px-3 py-2 text-neutral-600 hover:bg-neutral-100" href="#">Véhicules</a>
+        <a class="rounded-md px-3 py-2 text-neutral-600 hover:bg-neutral-100" href="#">Disponibilités</a>
+        <a class="rounded-md px-3 py-2 text-neutral-600 hover:bg-neutral-100" href="#">Réservations</a>
+        <a class="rounded-md px-3 py-2 text-neutral-600 hover:bg-neutral-100" href="#">Tarifs</a>
+      </nav>
+    </aside>
+
+    <div class="flex-1">
+      <header class="flex items-center justify-between border-b border-neutral-200 bg-white px-6 py-4">
+        <h1 class="text-lg font-semibold">Tableau de bord</h1>
+        <div class="flex items-center gap-3 text-sm text-neutral-600">
+          <span>Karim Partenaire</span>
+          <span class="h-8 w-8 rounded-full bg-primary-100"></span>
+        </div>
+      </header>
+
+      <main class="p-6">
+
+        <!-- Cartes de synthèse -->
+        <div class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div class="rounded-lg border border-neutral-200 bg-white p-5">
+            <p class="text-xs font-medium text-neutral-500">Demandes en attente</p>
+            <p class="mt-1 text-2xl font-semibold text-warning-700">4</p>
+          </div>
+          <div class="rounded-lg border border-neutral-200 bg-white p-5">
+            <p class="text-xs font-medium text-neutral-500">Réservations à venir</p>
+            <p class="mt-1 text-2xl font-semibold text-neutral-900">9</p>
+          </div>
+          <div class="rounded-lg border border-neutral-200 bg-white p-5">
+            <p class="text-xs font-medium text-neutral-500">Biens publiés</p>
+            <p class="mt-1 text-2xl font-semibold text-neutral-900">6</p>
+          </div>
+          <div class="rounded-lg border border-neutral-200 bg-white p-5">
+            <p class="text-xs font-medium text-neutral-500">Taux d'acceptation</p>
+            <p class="mt-1 text-2xl font-semibold text-success-700">82%</p>
+          </div>
+        </div>
+
+        <!-- Dernières demandes -->
+        <div class="rounded-lg border border-neutral-200 bg-white">
+          <div class="flex items-center justify-between border-b border-neutral-200 px-5 py-3">
+            <h2 class="text-sm font-semibold text-neutral-900">Dernières demandes reçues</h2>
+            <a href="#" class="text-xs font-medium text-primary-700 hover:underline">Voir toutes les réservations</a>
+          </div>
+
+          <table class="w-full text-left text-sm">
+            <thead class="text-xs uppercase text-neutral-400">
+              <tr>
+                <th class="px-5 py-2 font-medium">Client</th>
+                <th class="px-5 py-2 font-medium">Bien</th>
+                <th class="px-5 py-2 font-medium">Dates</th>
+                <th class="px-5 py-2 font-medium">Montant</th>
+                <th class="px-5 py-2 font-medium">Statut</th>
+                <th class="px-5 py-2 font-medium">Action</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-neutral-100">
+              <tr>
+                <td class="px-5 py-3">Amara K.</td>
+                <td class="px-5 py-3">Résidence Les Palmiers</td>
+                <td class="px-5 py-3 text-neutral-500">10 → 13 août</td>
+                <td class="px-5 py-3">135 000 FCFA</td>
+                <td class="px-5 py-3"><span class="inline-flex items-center rounded-full bg-warning-100 px-2.5 py-0.5 text-xs font-medium text-warning-800">En attente</span></td>
+                <td class="px-5 py-3"><a href="#" class="text-xs font-medium text-primary-700 hover:underline">Traiter</a></td>
+              </tr>
+              <tr>
+                <td class="px-5 py-3">Fatou D.</td>
+                <td class="px-5 py-3">Toyota Corolla 2023</td>
+                <td class="px-5 py-3 text-neutral-500">15 → 18 août</td>
+                <td class="px-5 py-3">75 000 FCFA</td>
+                <td class="px-5 py-3"><span class="inline-flex items-center rounded-full bg-success-100 px-2.5 py-0.5 text-xs font-medium text-success-800">Confirmée</span></td>
+                <td class="px-5 py-3"><a href="#" class="text-xs font-medium text-primary-700 hover:underline">Voir</a></td>
+              </tr>
+              <tr>
+                <td class="px-5 py-3">Yves B.</td>
+                <td class="px-5 py-3">Villa du Lac</td>
+                <td class="px-5 py-3 text-neutral-500">2 → 5 sept.</td>
+                <td class="px-5 py-3">210 000 FCFA</td>
+                <td class="px-5 py-3"><span class="inline-flex items-center rounded-full bg-warning-100 px-2.5 py-0.5 text-xs font-medium text-warning-800">En attente</span></td>
+                <td class="px-5 py-3"><a href="#" class="text-xs font-medium text-primary-700 hover:underline">Traiter</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+</body>
+</html>
