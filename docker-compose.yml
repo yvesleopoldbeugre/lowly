@@ -1,0 +1,84 @@
+# docker-compose.yml — topologie de base (staging/production), voir
+# DEPLOYMENT.md §3. Docker Compose fusionne automatiquement ce fichier avec
+# docker-compose.override.yml lorsqu'il est présent (environnement `local`,
+# voir ce fichier) ; en staging/production, ne déployer que ce fichier
+# (`docker compose -f docker-compose.yml ...`) pour ignorer l'override.
+#
+# Les variables d'environnement référencées ici (${DB_DATABASE}, etc.) sont
+# lues depuis le `.env` Laravel présent à la racine du projet — Docker
+# Compose charge automatiquement ce fichier pour l'interpolation de
+# variables, sans configuration supplémentaire.
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - storage-data:/var/www/html/storage/app
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:stable
+    ports:
+      - "8000:80"
+    volumes:
+      - ./docker/nginx:/etc/nginx/conf.d:ro
+    depends_on:
+      - app
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-lowly}
+      POSTGRES_USER: ${DB_USERNAME:-lowly}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-lowly}
+    volumes:
+      - lowly-db-data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    restart: unless-stopped
+
+  redis:
+    image: redis:7
+    restart: unless-stopped
+
+  # File d'attente Redis pilotée par Laravel — voir ARCHITECTURE.md §10
+  # (notifications, redimensionnement de photos, expiration des
+  # contre-propositions, statistiques périodiques).
+  queue:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
+    command: ["php", "artisan", "queue:work", "--tries=3", "--timeout=90"]
+    restart: unless-stopped
+
+  # Planificateur Laravel — nécessaire à l'expiration automatique des
+  # contre-propositions (BUSINESS_RULES.md §6.2) et au calcul périodique des
+  # statistiques d'administration (ARCHITECTURE.md §10). Alternative à un
+  # cron système externe appelant `schedule:run` chaque minute.
+  scheduler:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
+    command: ["sh", "-c", "while true; do php artisan schedule:run --no-interaction; sleep 60; done"]
+    restart: unless-stopped
+
+volumes:
+  lowly-db-data:
+  storage-data:

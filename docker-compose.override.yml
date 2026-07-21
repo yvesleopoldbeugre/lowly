@@ -1,0 +1,54 @@
+# docker-compose.override.yml — environnement `local` uniquement.
+#
+# Chargé automatiquement par Docker Compose en complément de
+# docker-compose.yml lorsque les deux fichiers sont présents (aucune option
+# `-f` nécessaire pour le développement quotidien). Bascule les services PHP
+# sur docker/php/Dockerfile.dev (Xdebug, pas de mise en cache de
+# configuration) et monte le code source en volume pour un rechargement
+# immédiat des modifications — voir docs/engineering/15-deployment.md §3.
+
+services:
+  app:
+    build:
+      dockerfile: docker/php/Dockerfile.dev
+    volumes:
+      - .:/var/www/html:cached
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+
+  queue:
+    build:
+      dockerfile: docker/php/Dockerfile.dev
+    volumes:
+      - .:/var/www/html:cached
+
+  scheduler:
+    build:
+      dockerfile: docker/php/Dockerfile.dev
+    volumes:
+      - .:/var/www/html:cached
+
+  postgres:
+    # Port exposé côté hôte uniquement en local, pour un accès direct via un
+    # client SQL de bureau. Volontairement absent de docker-compose.yml afin
+    # de ne jamais exposer PostgreSQL publiquement en staging/production.
+    ports:
+      - "5432:5432"
+
+  redis:
+    ports:
+      - "6379:6379"
+
+  # Serveur de développement Vite (Tailwind CSS 4 + Alpine.js) — voir
+  # docs/engineering/06-blade-tailwind-guidelines.md et docs/engineering/07-javascript-guidelines.md.
+  # Absent de la topologie staging/production, où les assets sont compilés
+  # au build (`npm run build`, voir docs/engineering/15-deployment.md §2).
+  node:
+    image: node:22-alpine
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html:cached
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    ports:
+      - "5173:5173"

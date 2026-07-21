@@ -1,0 +1,44 @@
+# docker/php/Dockerfile.dev — image PHP-FPM de développement local
+#
+# Voir docs/engineering/15-deployment.md §3. Différences avec docker/php/Dockerfile
+# (production) : Xdebug installé et activé, dépendances Composer de dev
+# conservées, code applicatif monté en volume plutôt que copié dans l'image
+# (voir docker-compose.override.yml).
+
+FROM php:8.4-fpm-alpine AS base
+
+RUN apk add --no-cache \
+        postgresql-dev \
+        libzip-dev \
+        libpng-dev \
+        libjpeg-turbo-dev \
+        freetype-dev \
+        icu-dev \
+        oniguruma-dev \
+        linux-headers \
+        $PHPIZE_DEPS \
+    && docker-php-ext-configure gd --with-jpeg --with-freetype \
+    && docker-php-ext-install -j"$(nproc)" \
+        pdo_pgsql \
+        pgsql \
+        bcmath \
+        intl \
+        gd \
+        zip \
+        opcache \
+    && pecl install redis xdebug \
+    && docker-php-ext-enable redis xdebug \
+    && apk del $PHPIZE_DEPS
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+COPY docker/php/php.ini /usr/local/etc/php/conf.d/99-lowly.ini
+COPY docker/php/xdebug.ini /usr/local/etc/php/conf.d/99-xdebug.ini
+
+WORKDIR /var/www/html
+
+EXPOSE 9000
+
+# Pas d'ENTRYPOINT de mise en cache ici (contrairement à l'image de
+# production) : en développement, `config:cache` figerait le `.env` et
+# masquerait toute modification ultérieure sans commande manuelle.
+CMD ["php-fpm"]

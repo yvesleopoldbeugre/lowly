@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>LOWLY — Accueil / Recherche</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          primary: {50:'#eff6ff',100:'#dbeafe',200:'#bfdbfe',300:'#93c5fd',400:'#60a5fa',500:'#3b82f6',600:'#2563eb',700:'#1d4ed8',800:'#1e40af',900:'#1e3a8a'},
+          secondary: {50:'#f8fafc',100:'#f1f5f9',200:'#e2e8f0',300:'#cbd5e1',400:'#94a3b8',500:'#64748b',600:'#475569',700:'#334155',800:'#1e293b',900:'#0f172a'},
+          success: {50:'#f0fdf4',100:'#dcfce7',600:'#16a34a',700:'#15803d',800:'#166534'},
+          warning: {50:'#fffbeb',100:'#fef3c7',600:'#d97706',700:'#b45309',800:'#92400e'},
+          danger: {50:'#fef2f2',100:'#fee2e2',600:'#dc2626',700:'#b91c1c',800:'#991b1b'},
+          neutral: {50:'#fafafa',100:'#f5f5f5',200:'#e5e5e5',300:'#d4d4d4',400:'#a3a3a3',500:'#737373',600:'#525252',700:'#404040',800:'#262626',900:'#171717'},
+        },
+      }
+    }
+  }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+</head>
+<body class="bg-neutral-50 text-neutral-900 font-sans" x-data="{ type: 'residence' }">
+
+  <!-- Maquette UX/UI — voir UX_UI.md §8.1. Écran : Accueil + résultats de recherche (Public). -->
+
+  <header class="border-b border-neutral-200 bg-white">
+    <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+      <span class="text-xl font-semibold text-primary-700">LOWLY</span>
+      <nav class="hidden gap-6 text-sm font-medium text-neutral-600 md:flex">
+        <a class="hover:text-primary-700" href="#">Résidences</a>
+        <a class="hover:text-primary-700" href="#">Véhicules</a>
+        <a class="hover:text-primary-700" href="#">Devenir partenaire</a>
+      </nav>
+      <div class="flex gap-2">
+        <button class="rounded-md px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100">Connexion</button>
+        <button class="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700">S'inscrire</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Barre de recherche -->
+  <section class="bg-primary-700 py-10">
+    <div class="mx-auto max-w-4xl px-4">
+      <h1 class="mb-6 text-center text-2xl font-semibold text-white">Trouvez une résidence ou un véhicule en toute confiance</h1>
+      <div class="flex flex-col gap-3 rounded-xl bg-white p-4 shadow-lg md:flex-row md:items-end">
+        <div class="flex gap-2">
+          <button @click="type = 'residence'" :class="type === 'residence' ? 'bg-primary-100 text-primary-800' : 'bg-neutral-100 text-neutral-600'" class="rounded-md px-3 py-2 text-sm font-medium">Résidences</button>
+          <button @click="type = 'vehicle'" :class="type === 'vehicle' ? 'bg-primary-100 text-primary-800' : 'bg-neutral-100 text-neutral-600'" class="rounded-md px-3 py-2 text-sm font-medium">Véhicules</button>
+        </div>
+        <div class="flex flex-1 flex-col gap-3 md:flex-row">
+          <label class="flex-1">
+            <span class="mb-1 block text-xs font-medium text-neutral-500">Destination</span>
+            <input type="text" placeholder="Abidjan, Cocody…" class="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500">
+          </label>
+          <label class="flex-1">
+            <span class="mb-1 block text-xs font-medium text-neutral-500">Arrivée</span>
+            <input type="date" class="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500">
+          </label>
+          <label class="flex-1">
+            <span class="mb-1 block text-xs font-medium text-neutral-500">Départ</span>
+            <input type="date" class="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500">
+          </label>
+        </div>
+        <button class="rounded-md bg-primary-600 px-6 py-2 text-sm font-semibold text-white hover:bg-primary-700">Rechercher</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Résultats -->
+  <main class="mx-auto max-w-6xl px-4 py-10">
+    <div class="mb-6 flex items-center justify-between">
+      <h2 class="text-lg font-semibold text-neutral-900">Annonces disponibles à Abidjan</h2>
+      <span class="text-sm text-neutral-500">24 résultats</span>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <template x-for="i in 8" :key="i">
+        <article class="flex flex-col overflow-hidden rounded-lg border border-neutral-200 bg-white transition hover:shadow-md">
+          <img :src="'https://picsum.photos/seed/lowly' + i + '/400/280'" alt="Photo de l'annonce" class="h-40 w-full object-cover">
+          <div class="flex flex-col gap-1 p-4">
+            <h3 class="text-sm font-semibold text-neutral-900">Résidence Les Palmiers</h3>
+            <p class="text-xs text-neutral-500">Cocody, Abidjan</p>
+            <p class="mt-1 text-sm font-semibold text-primary-700">45 000 FCFA / jour</p>
+          </div>
+        </article>
+      </template>
+    </div>
+
+    <div class="mt-8 flex justify-center gap-2 text-sm">
+      <button class="rounded-md border border-neutral-300 px-3 py-1.5 text-neutral-500">Précédent</button>
+      <button class="rounded-md bg-primary-600 px-3 py-1.5 text-white">1</button>
+      <button class="rounded-md border border-neutral-300 px-3 py-1.5 text-neutral-700">2</button>
+      <button class="rounded-md border border-neutral-300 px-3 py-1.5 text-neutral-700">3</button>
+      <button class="rounded-md border border-neutral-300 px-3 py-1.5 text-neutral-700">Suivant</button>
+    </div>
+  </main>
+
+  <footer class="border-t border-neutral-200 bg-white py-8 text-center text-xs text-neutral-500">
+    LOWLY — Maquette UX/UI de conception, non contractuelle. Voir UX_UI.md §8.1.
+  </footer>
+
+</body>
+</html>

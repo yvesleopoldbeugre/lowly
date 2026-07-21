@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>LOWLY — Demande &amp; suivi de réservation (Client)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: { extend: { colors: {
+      primary: {50:'#eff6ff',100:'#dbeafe',600:'#2563eb',700:'#1d4ed8',800:'#1e40af'},
+      success: {100:'#dcfce7',700:'#15803d',800:'#166534'},
+      warning: {50:'#fffbeb',100:'#fef3c7',700:'#b45309',800:'#92400e'},
+      danger: {100:'#fee2e2',700:'#b91c1c',800:'#991b1b'},
+      neutral: {50:'#fafafa',100:'#f5f5f5',200:'#e5e5e5',300:'#d4d4d4',400:'#a3a3a3',500:'#737373',600:'#525252',700:'#404040',800:'#262626',900:'#171717'},
+    } } }
+  }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+</head>
+<body class="bg-neutral-50 text-neutral-900" x-data="{ status: 'contre_proposee' }">
+
+  <!-- Maquette UX/UI — voir UX_UI.md §8.4 (écrans §5.1 et §5.2 : demande et suivi de réservation, Client). -->
+
+  <header class="border-b border-neutral-200 bg-white">
+    <div class="mx-auto flex max-w-3xl items-center justify-between px-4 py-4">
+      <span class="text-xl font-semibold text-primary-700">LOWLY</span>
+      <nav class="flex gap-4 text-sm text-neutral-600">
+        <a class="font-medium text-primary-700" href="#">Mes réservations</a>
+        <a href="#">Profil</a>
+        <a href="#">Notifications</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-3xl px-4 py-8">
+
+    <!-- Sélecteur d'état (pour la démonstration de la maquette uniquement) -->
+    <div class="mb-6 flex flex-wrap gap-2 text-xs">
+      <span class="mr-2 self-center text-neutral-400">Aperçu des états :</span>
+      <button @click="status = 'en_attente'" class="rounded-full border border-neutral-300 px-3 py-1 hover:bg-neutral-100">en_attente</button>
+      <button @click="status = 'contre_proposee'" class="rounded-full border border-neutral-300 px-3 py-1 hover:bg-neutral-100">contre_proposee</button>
+      <button @click="status = 'confirmee'" class="rounded-full border border-neutral-300 px-3 py-1 hover:bg-neutral-100">confirmee</button>
+      <button @click="status = 'refusee'" class="rounded-full border border-neutral-300 px-3 py-1 hover:bg-neutral-100">refusee</button>
+    </div>
+
+    <div class="rounded-lg border border-neutral-200 bg-white p-6">
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex gap-4">
+          <img src="https://picsum.photos/seed/lowly-req/120/90" class="h-20 w-28 rounded-md object-cover" alt="Photo du bien">
+          <div>
+            <h1 class="text-base font-semibold text-neutral-900">Résidence Les Palmiers</h1>
+            <p class="text-sm text-neutral-500">Cocody, Abidjan · 10 → 13 août 2026 (3 journées)</p>
+            <p class="text-sm font-semibold text-neutral-900">135 000 FCFA</p>
+          </div>
+        </div>
+
+        <!-- Badge de statut — composant reservation-status-badge, voir docs/engineering/06 §9.1 -->
+        <span x-show="status === 'en_attente'" class="inline-flex items-center rounded-full bg-warning-100 px-3 py-1 text-sm font-medium text-warning-800">En attente</span>
+        <span x-show="status === 'contre_proposee'" style="display:none" class="inline-flex items-center rounded-full bg-warning-100 px-3 py-1 text-sm font-medium text-warning-800">Contre-proposée</span>
+        <span x-show="status === 'confirmee'" style="display:none" class="inline-flex items-center rounded-full bg-success-100 px-3 py-1 text-sm font-medium text-success-800">Confirmée</span>
+        <span x-show="status === 'refusee'" style="display:none" class="inline-flex items-center rounded-full bg-danger-100 px-3 py-1 text-sm font-medium text-danger-800">Refusée</span>
+      </div>
+
+      <!-- Bloc contre-proposition -->
+      <div x-show="status === 'contre_proposee'" class="mt-6 rounded-md border border-warning-100 bg-warning-50 p-4">
+        <p class="mb-3 text-sm font-medium text-warning-800">Le partenaire propose une alternative :</p>
+        <div class="flex items-center gap-4">
+          <img src="https://picsum.photos/seed/lowly-alt/120/90" class="h-16 w-24 rounded-md object-cover" alt="Bien alternatif proposé">
+          <div class="flex-1">
+            <p class="text-sm font-semibold text-neutral-900">Villa du Lac — même quartier</p>
+            <p class="text-xs text-neutral-500">10 → 13 août 2026 · 150 000 FCFA</p>
+          </div>
+        </div>
+        <div class="mt-4 flex gap-2">
+          <button class="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700">Accepter la proposition</button>
+          <button class="rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100">Refuser la proposition</button>
+        </div>
+      </div>
+
+      <p x-show="status === 'en_attente'" class="mt-6 text-sm text-neutral-500">
+        Votre demande a été transmise au partenaire. Il dispose d'un délai de réponse configuré par la plateforme.
+      </p>
+      <p x-show="status === 'confirmee'" style="display:none" class="mt-6 text-sm text-success-700">
+        Réservation confirmée — le calendrier du bien est bloqué pour ces dates. Retrouvez les détails dans votre historique.
+      </p>
+      <p x-show="status === 'refusee'" style="display:none" class="mt-6 text-sm text-danger-700">
+        Cette demande a été refusée sans alternative proposée. Vous pouvez soumettre une nouvelle demande sur une autre annonce.
+      </p>
+
+      <!-- Historique -->
+      <div class="mt-8 border-t border-neutral-200 pt-4">
+        <h2 class="mb-3 text-xs font-semibold uppercase tracking-wide text-neutral-400">Historique</h2>
+        <ol class="space-y-2 text-sm text-neutral-600">
+          <li class="flex justify-between"><span>Demande soumise</span><span class="text-neutral-400">21 juil. 2026 — 09:12</span></li>
+          <li class="flex justify-between"><span>Examinée par le partenaire</span><span class="text-neutral-400">21 juil. 2026 — 14:40</span></li>
+        </ol>
+      </div>
+    </div>
+
+  </main>
+
+</body>
+</html>

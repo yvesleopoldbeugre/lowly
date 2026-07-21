@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>LOWLY — Gestion des disponibilités (Partenaire)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: { extend: { colors: {
+      primary: {50:'#eff6ff',100:'#dbeafe',600:'#2563eb',700:'#1d4ed8',800:'#1e40af'},
+      success: {100:'#dcfce7',700:'#15803d',800:'#166534'},
+      warning: {100:'#fef3c7',700:'#b45309',800:'#92400e'},
+      danger: {100:'#fee2e2',600:'#dc2626',700:'#b91c1c',800:'#991b1b'},
+      neutral: {50:'#fafafa',100:'#f5f5f5',200:'#e5e5e5',300:'#d4d4d4',400:'#a3a3a3',500:'#737373',600:'#525252',700:'#404040',800:'#262626',900:'#171717'},
+    } } }
+  }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+</head>
+<body class="bg-neutral-50 text-neutral-900" x-data="{ showModal: false }">
+
+  <!-- Maquette UX/UI — voir UX_UI.md §8.6 (écran §6.3 : Gestion des disponibilités, Partenaire). -->
+  <!-- Blocages : origine `reservation` (automatique) vs manuelle (entretien/maintenance/usage_personnel)
+       — voir BUSINESS_RULES.md §4.2 et §7, DATABASE.md §7. -->
+
+  <div class="flex min-h-screen">
+    <aside class="hidden w-56 flex-col border-r border-neutral-200 bg-white p-4 md:flex">
+      <span class="mb-8 px-2 text-lg font-semibold text-primary-700">LOWLY</span>
+      <nav class="flex flex-col gap-1 text-sm">
+        <a class="rounded-md px-3 py-2 text-neutral-600 hover:bg-neutral-100" href="#">Tableau de bord</a>
+        <a class="rounded-md px-3 py-2 text-neutral-600 hover:bg-neutral-100" href="#">Résidences</a>
+        <a class="rounded-md px-3 py-2 text-neutral-600 hover:bg-neutral-100" href="#">Véhicules</a>
+        <a class="rounded-md bg-primary-50 px-3 py-2 font-medium text-primary-700" href="#">Disponibilités</a>
+        <a class="rounded-md px-3 py-2 text-neutral-600 hover:bg-neutral-100" href="#">Réservations</a>
+        <a class="rounded-md px-3 py-2 text-neutral-600 hover:bg-neutral-100" href="#">Tarifs</a>
+      </nav>
+    </aside>
+
+    <div class="flex-1 p-6">
+      <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 class="text-lg font-semibold">Disponibilités</h1>
+          <select class="mt-1 rounded-md border border-neutral-300 px-3 py-1.5 text-sm">
+            <option>Toyota Corolla 2023 — véhicule</option>
+            <option>Résidence Les Palmiers</option>
+          </select>
+        </div>
+        <button @click="showModal = true" class="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700">+ Ajouter un blocage manuel</button>
+      </div>
+
+      <!-- Légende -->
+      <div class="mb-4 flex flex-wrap gap-4 text-xs text-neutral-500">
+        <span class="flex items-center gap-1.5"><span class="h-3 w-3 rounded bg-white border border-neutral-300"></span> Disponible</span>
+        <span class="flex items-center gap-1.5"><span class="h-3 w-3 rounded bg-danger-100 border border-danger-600"></span> Réservation confirmée</span>
+        <span class="flex items-center gap-1.5"><span class="h-3 w-3 rounded bg-neutral-200 border border-neutral-400"></span> Blocage manuel</span>
+      </div>
+
+      <!-- Calendrier -->
+      <div class="rounded-lg border border-neutral-200 bg-white p-4">
+        <div class="mb-3 flex items-center justify-between">
+          <button class="rounded-md px-2 py-1 text-neutral-500 hover:bg-neutral-100">←</button>
+          <span class="text-sm font-semibold">Août 2026</span>
+          <button class="rounded-md px-2 py-1 text-neutral-500 hover:bg-neutral-100">→</button>
+        </div>
+        <div class="grid grid-cols-7 gap-1 text-center text-xs text-neutral-400">
+          <span>Lun</span><span>Mar</span><span>Mer</span><span>Jeu</span><span>Ven</span><span>Sam</span><span>Dim</span>
+        </div>
+        <div class="mt-1 grid grid-cols-7 gap-1">
+          <template x-for="day in 31" :key="day">
+            <div
+              class="flex h-14 flex-col items-start rounded-md border p-1 text-xs"
+              :class="{
+                'border-danger-600 bg-danger-100 text-danger-800': day >= 10 && day <= 12,
+                'border-neutral-400 bg-neutral-200 text-neutral-700': day >= 20 && day <= 22,
+                'border-neutral-200 bg-white text-neutral-600': !(day >= 10 && day <= 12) && !(day >= 20 && day <= 22)
+              }"
+            >
+              <span x-text="day"></span>
+              <span x-show="day >= 10 && day <= 12" style="display:none" class="text-[10px]">Réservé</span>
+              <span x-show="day >= 20 && day <= 22" style="display:none" class="text-[10px]">Entretien</span>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modale d'ajout de blocage manuel -->
+  <div x-show="showModal" style="display:none" class="fixed inset-0 flex items-center justify-center bg-neutral-900/40 p-4">
+    <div @click.outside="showModal = false" class="w-full max-w-sm rounded-lg bg-white p-6">
+      <h2 class="mb-4 text-sm font-semibold text-neutral-900">Ajouter un blocage manuel</h2>
+      <label class="mb-3 block">
+        <span class="mb-1 block text-xs font-medium text-neutral-500">Motif</span>
+        <select class="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm">
+          <option>Entretien</option>
+          <option>Maintenance</option>
+          <option>Usage personnel</option>
+        </select>
+      </label>
+      <div class="mb-4 grid grid-cols-2 gap-2">
+        <label class="block">
+          <span class="mb-1 block text-xs font-medium text-neutral-500">Du</span>
+          <input type="date" class="w-full rounded-md border border-neutral-300 px-2 py-1.5 text-sm">
+        </label>
+        <label class="block">
+          <span class="mb-1 block text-xs font-medium text-neutral-500">Au</span>
+          <input type="date" class="w-full rounded-md border border-neutral-300 px-2 py-1.5 text-sm">
+        </label>
+      </div>
+      <div class="flex justify-end gap-2">
+        <button @click="showModal = false" class="rounded-md border border-neutral-300 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100">Annuler</button>
+        <button class="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700">Bloquer la période</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
