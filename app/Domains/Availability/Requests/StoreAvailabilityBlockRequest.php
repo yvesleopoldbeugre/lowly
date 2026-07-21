@@ -6,7 +6,9 @@ use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * Domaine Availability — voir API_GUIDE.md §11 (`POST /api/v1/partner/availability-blocks`)
- * et BUSINESS_RULES.md §4.2 (blocages manuels : entretien, maintenance, usage personnel).
+ * et BUSINESS_RULES.md §4.2 (blocages manuels véhicule : entretien, maintenance,
+ * usage personnel) et §7.1 (blocage manuel résidence : indisponibilité générique,
+ * `autre`).
  *
  * Ne couvre que les blocages d'origine manuelle : un blocage d'origine
  * `reservation` est créé exclusivement par le système lors de la
@@ -30,7 +32,7 @@ class StoreAvailabilityBlockRequest extends FormRequest
             'blockable_id' => ['required', 'uuid'],
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after:start_date'],
-            'origin' => ['required', 'string', 'in:entretien,maintenance,usage_personnel'],
+            'origin' => ['required', 'string', 'in:entretien,maintenance,usage_personnel,autre'],
         ];
     }
 }

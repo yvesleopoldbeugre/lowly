@@ -72,7 +72,9 @@ public function index(Request $request): AnonymousResourceCollection
 
 ## 7. Codes d'erreur métier stables
 
-Extrait des codes d'erreur métier stables utilisés par le domaine `Reservation` (le format général est défini dans [`API_GUIDE.md`](../../API_GUIDE.md) §7) :
+Extrait des codes d'erreur métier stables utilisés par les domaines applicatifs (le format général est défini dans [`API_GUIDE.md`](../../API_GUIDE.md) §7) :
+
+Domaine `Reservation` :
 
 | Code | Situation |
 |---|---|
@@ -82,6 +84,12 @@ Extrait des codes d'erreur métier stables utilisés par le domaine `Reservation
 | `counter_offer_expired` | Tentative de réponse à une contre-proposition expirée |
 | `counter_offer_already_answered` | Contre-proposition déjà traitée |
 | `partner_not_validated` | Un partenaire non validé tente de publier une annonce |
+
+Domaine `Availability` :
+
+| Code | Situation |
+|---|---|
+| `availability_block_overlap` | La période demandée chevauche un blocage existant sur ce bien (contrainte d'exclusion GiST, voir `DATABASE.md` §7.2) |
 
 Ces codes sont un contrat stable consommé potentiellement par une interface front ; leur renommage est traité comme un changement non rétrocompatible (§3).
 
