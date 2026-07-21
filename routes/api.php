@@ -9,6 +9,7 @@ use App\Domains\Availability\Controllers\Api\PartnerAvailabilityBlockController;
 use App\Domains\Catalogue\Controllers\Api\PartnerResidenceController;
 use App\Domains\Catalogue\Controllers\Api\PartnerResidencePhotoController;
 use App\Domains\Catalogue\Controllers\Api\PartnerVehicleController;
+use App\Domains\Catalogue\Controllers\Api\PartnerVehiclePhotoController;
 use App\Domains\Catalogue\Controllers\Api\ResidenceController;
 use App\Domains\Catalogue\Controllers\Api\SearchController;
 use App\Domains\Catalogue\Controllers\Api\VehicleController;
@@ -91,6 +92,8 @@ Route::middleware('web')->prefix('v1')->name('api.v1.')->group(function () {
         Route::get('vehicles', [PartnerVehicleController::class, 'index'])->name('vehicles.index');
         Route::post('vehicles', [PartnerVehicleController::class, 'store'])->name('vehicles.store');
         Route::patch('vehicles/{vehicle}', [PartnerVehicleController::class, 'update'])->name('vehicles.update');
+        Route::post('vehicles/{vehicle}/photos', [PartnerVehiclePhotoController::class, 'store'])->name('vehicles.photos.store');
+        Route::delete('vehicles/{vehicle}/photos/{photo}', [PartnerVehiclePhotoController::class, 'destroy'])->name('vehicles.photos.destroy');
 
         Route::post('availability-blocks', [PartnerAvailabilityBlockController::class, 'store'])->name('availability-blocks.store');
         Route::delete('availability-blocks/{availabilityBlock}', [PartnerAvailabilityBlockController::class, 'destroy'])->name('availability-blocks.destroy');

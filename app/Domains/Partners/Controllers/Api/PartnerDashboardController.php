@@ -2,6 +2,7 @@
 
 namespace App\Domains\Partners\Controllers\Api;
 
+use App\Domains\Partners\Actions\GetPartnerDashboard;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,8 +17,16 @@ use Illuminate\Http\Request;
  */
 class PartnerDashboardController extends Controller
 {
-    public function index(Request $request): JsonResponse
+    public function index(Request $request, GetPartnerDashboard $action): JsonResponse
     {
-        abort(501, 'Non implémenté — voir API_GUIDE.md §11 (GET /api/v1/partner/dashboard).');
+        $partner = $request->user()->partner;
+
+        return response()->json([
+            'data' => [
+                'id' => $partner->id,
+                'type' => 'partner_dashboard',
+                'attributes' => $action->executer($partner),
+            ],
+        ]);
     }
 }
