@@ -227,6 +227,13 @@ Le tableau de bord (`GET /partner/dashboard`) ne couvre pour l'instant que les
 données du domaine Catalogue (décompte des résidences/véhicules par statut) ; les
 statistiques de réservation seront ajoutées avec le domaine Reservation.
 
+`origin` sur `POST /partner/availability-blocks` accepte `entretien`, `maintenance`,
+`usage_personnel` (véhicules) ou `autre` (indisponibilité résidence, ex : travaux) —
+jamais `reservation`, réservé aux blocages créés automatiquement par le système à la
+confirmation d'une réservation, ni supprimables via `DELETE`. Un chevauchement de
+période avec un blocage existant sur le même bien renvoie `409`
+(code `availability_block_overlap`, voir `docs/engineering/09-api-guidelines.md` §7).
+
 ## 12. Endpoints — Administration
 
 | Méthode | Route | Description |

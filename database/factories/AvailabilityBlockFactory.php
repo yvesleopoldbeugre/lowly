@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Domains\Availability\Models\AvailabilityBlock;
 use App\Domains\Catalogue\Models\Residence;
+use App\Domains\Catalogue\Models\Vehicle;
 use App\Domains\Identity\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -40,6 +41,7 @@ class AvailabilityBlockFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'blockable_type' => 'vehicle',
+            'blockable_id' => Vehicle::factory()->publie(),
             'origin' => $motif,
             'reservation_id' => null,
         ]);
