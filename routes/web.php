@@ -1,5 +1,8 @@
 <?php
 
+use App\Domains\Catalogue\Controllers\Web\ResidenceController;
+use App\Domains\Catalogue\Controllers\Web\SearchController;
+use App\Domains\Catalogue\Controllers\Web\VehicleController;
 use App\Domains\Identity\Controllers\Web\AuthController;
 use App\Domains\Identity\Controllers\Web\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -17,9 +20,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [SearchController::class, 'index'])->name('home');
+Route::get('residences/{residence}', [ResidenceController::class, 'show'])->name('residences.show');
+Route::get('vehicles/{vehicle}', [VehicleController::class, 'show'])->name('vehicles.show');
 
 Route::get('login', [AuthController::class, 'showLogin'])->middleware('guest')->name('login.show');
 Route::get('register', [AuthController::class, 'showRegister'])->middleware('guest')->name('register.show');
