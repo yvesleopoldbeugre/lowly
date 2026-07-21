@@ -204,12 +204,28 @@ au reste des endpoints Client ci-dessus.
 | `GET` | `/api/v1/partner/vehicles` | Véhicules du partenaire connecté |
 | `POST` | `/api/v1/partner/vehicles` | Créer un véhicule |
 | `PATCH` | `/api/v1/partner/vehicles/{id}` | Mettre à jour un véhicule |
+| `POST` | `/api/v1/partner/vehicles/{id}/photos` | Ajouter une photo |
+| `DELETE` | `/api/v1/partner/vehicles/{id}/photos/{photoId}` | Supprimer une photo |
 | `POST` | `/api/v1/partner/availability-blocks` | Créer un blocage manuel (entretien, maintenance, usage personnel) |
 | `DELETE` | `/api/v1/partner/availability-blocks/{id}` | Lever un blocage manuel |
 | `GET` | `/api/v1/partner/reservations` | Demandes et réservations reçues |
 | `POST` | `/api/v1/partner/reservations/{id}/accept` | Accepter une demande |
 | `POST` | `/api/v1/partner/reservations/{id}/reject` | Refuser une demande |
 | `POST` | `/api/v1/partner/reservations/{id}/counter-offer` | Soumettre une contre-proposition |
+
+Une résidence/véhicule est créé au statut `brouillon`. Le `PATCH` accepte un champ
+`submit_for_validation` (booléen) qui, uniquement depuis `brouillon`, déclenche la
+soumission à l'admin (passage à `en_validation`) — nécessite un profil partenaire
+`valide`, sinon `409` (code `partner_not_validated`). Éditer une annonce sans ce
+champ ne change jamais son statut, **sauf** depuis `rejetee`/`rejete`, qui repasse
+automatiquement en `brouillon` (correction). Éditer une annonce `en_validation` ou
+`suspendue`/`suspendu` est refusé (`403`) ; éditer une annonce `publiee`/`publie`
+(ex : changer le tarif) est autorisé et ne la fait pas repasser en validation. Voir
+`UML.md` §9 pour le diagramme d'état complet.
+
+Le tableau de bord (`GET /partner/dashboard`) ne couvre pour l'instant que les
+données du domaine Catalogue (décompte des résidences/véhicules par statut) ; les
+statistiques de réservation seront ajoutées avec le domaine Reservation.
 
 ## 12. Endpoints — Administration
 
