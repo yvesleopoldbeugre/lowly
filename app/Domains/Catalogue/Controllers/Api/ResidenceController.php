@@ -2,23 +2,27 @@
 
 namespace App\Domains\Catalogue\Controllers\Api;
 
+use App\Domains\Catalogue\Actions\ListPublishedResidences;
 use App\Domains\Catalogue\Models\Residence;
+use App\Domains\Catalogue\Requests\ListResidencesRequest;
+use App\Domains\Catalogue\Resources\ResidenceResource;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /**
  * Domaine Catalogue — voir API_GUIDE.md §9 (endpoints publics).
  */
 class ResidenceController extends Controller
 {
-    public function index(Request $request): JsonResponse
+    public function index(ListResidencesRequest $request, ListPublishedResidences $action): AnonymousResourceCollection
     {
-        abort(501, 'Non implémenté — voir API_GUIDE.md §9 (GET /api/v1/residences).');
+        return ResidenceResource::collection($action->executer($request->validated()));
     }
 
-    public function show(Residence $residence): JsonResponse
+    public function show(Residence $residence): ResidenceResource
     {
-        abort(501, 'Non implémenté — voir API_GUIDE.md §9 (GET /api/v1/residences/{id}).');
+        abort_unless($residence->isPublished(), 404);
+
+        return ResidenceResource::make($residence->load('photos'));
     }
 }

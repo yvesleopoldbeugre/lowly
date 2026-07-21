@@ -7,6 +7,7 @@ use App\Domains\Catalogue\Contracts\OffreReservable;
 use App\Domains\Partners\Models\Partner;
 use App\Domains\Reservation\Models\Reservation;
 use Database\Factories\VehicleFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -73,6 +74,18 @@ class Vehicle extends Model implements OffreReservable
     public function isPublished(): bool
     {
         return $this->status === 'publie';
+    }
+
+    public function scopePublished(Builder $query): Builder
+    {
+        return $query->where('status', 'publie');
+    }
+
+    public function scopePriceBetween(Builder $query, ?float $min, ?float $max): Builder
+    {
+        return $query
+            ->when($min !== null, fn (Builder $q) => $q->where('daily_rate', '>=', $min))
+            ->when($max !== null, fn (Builder $q) => $q->where('daily_rate', '<=', $max));
     }
 
     protected static function newFactory(): VehicleFactory
