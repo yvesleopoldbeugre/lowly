@@ -28,7 +28,7 @@ Cette roadmap suit le principe directeur du projet : **aucun développement sans
 - Modélisation concrète de la base de données (migrations Laravel, modèles Eloquent, factories, seeders) — fait, voir `database/migrations/`, `app/Domains/*/Models/`, `database/factories/` et `database/seeders/DatabaseSeeder.php`.
 - Maquettes UX/UI des écrans MVP — fait, voir [`UX_UI.md`](./UX_UI.md) et `docs/ux/mockups/`.
 - Implémentation concrète de l'API interne (`routes/api.php`, contrôleurs squelettes, Form Requests, API Resources) — fait, conforme aux 42 endpoints de [`API_GUIDE.md`](./API_GUIDE.md) §9-12 ; logique métier volontairement absente (réservée à la Phase 1).
-- Validation de l'ensemble de la documentation avant tout développement.
+- Validation de l'ensemble de la documentation avant tout développement — fait : cohérence croisée vérifiée entre documentation et code (schéma `DATABASE.md` ↔ migrations, 42 endpoints `API_GUIDE.md` ↔ `routes/api.php`, 7 domaines `ARCHITECTURE.md` ↔ `app/Domains`, contraintes d'intégrité `DATABASE.md` §12 ↔ migrations), aucun lien interne cassé, version Laravel corrigée (12 → 13, alignée sur `composer.json`).
 
 ## 3. Phase 1 — MVP
 

@@ -14,7 +14,7 @@ Pourquoi une marketplace, pourquoi Laravel, pourquoi un monolithe modulaire, que
 
 | Couche | Technologie |
 |---|---|
-| Backend | Laravel 12, PHP 8.4+ |
+| Backend | Laravel 13, PHP 8.4+ |
 | Frontend | Blade, Tailwind CSS 4, JavaScript ES6+, Alpine.js |
 | Base de données | PostgreSQL 17 |
 | Cache / files | Redis |
