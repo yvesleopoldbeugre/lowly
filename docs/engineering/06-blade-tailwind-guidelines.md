@@ -36,7 +36,7 @@ Aucun style « one-off » ne doit être écrit pour un écran unique si un compo
 
 ## 3. Palette et tokens
 
-Les tokens de couleur et typographie sont centralisés dans `tailwind.config.js`, jamais redéfinis en dur dans une vue Blade.
+Les tokens de couleur et typographie sont centralisés, jamais redéfinis en dur dans une vue Blade. Le projet utilise Tailwind CSS 4 (voir `ADR-005`, `18-adr.md`), qui n'a pas de `tailwind.config.js` : les tokens sont définis via la directive `@theme` dans `resources/css/app.css`, seul mécanisme de configuration réel en v4.
 
 | Token | Usage |
 |---|---|
