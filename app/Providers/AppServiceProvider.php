@@ -9,6 +9,7 @@ use App\Domains\Partners\Models\Partner;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
@@ -42,5 +43,11 @@ class AppServiceProvider extends ServiceProvider
         // Protection anti brute-force sur l'authentification — voir
         // docs/engineering/10-security-guidelines.md §6 (5 tentatives/minute/IP).
         RateLimiter::for('auth', fn (Request $request) => Limit::perMinute(5)->by($request->ip()));
+
+        // Permet <x-layouts.guest>/<x-layouts.app> : resources/views/layouts/
+        // reste un répertoire distinct de components/ (arborescence imposée
+        // par docs/engineering/06-blade-tailwind-guidelines.md §4), mais
+        // utilisable avec la même syntaxe de composant anonyme.
+        Blade::anonymousComponentPath(resource_path('views/layouts'), 'layouts');
     }
 }
