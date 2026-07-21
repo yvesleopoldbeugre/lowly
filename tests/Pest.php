@@ -1,6 +1,8 @@
 <?php
 
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
 /*
@@ -17,6 +19,22 @@ use Tests\TestCase;
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
     ->in('Feature');
+
+beforeEach(function () {
+    // Les routes api/v1 sont volontairement protégées par le middleware
+    // `web` (session + CSRF, voir routes/api.php et API_GUIDE.md §4). La
+    // vérification CSRF elle-même est un comportement du framework, pas
+    // une règle métier LOWLY : elle est désactivée ici pour que les tests
+    // Feature portent sur la logique applicative, sans avoir à simuler
+    // l'obtention d'un jeton CSRF à chaque requête.
+    $this->withoutMiddleware(VerifyCsrfToken::class);
+
+    // Le store de cache `array` (CACHE_STORE=array en environnement de
+    // test) persiste entre les tests au sein d'un même process — sans ce
+    // flush, le rate limiter `auth` (voir AppServiceProvider) fuit d'un
+    // test à l'autre et fait échouer des tests indépendants.
+    Cache::flush();
+})->in('Feature');
 
 /*
 |--------------------------------------------------------------------------

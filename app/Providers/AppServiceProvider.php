@@ -6,7 +6,10 @@ use App\Domains\Catalogue\Models\Residence;
 use App\Domains\Catalogue\Models\Vehicle;
 use App\Domains\Identity\Models\User;
 use App\Domains\Partners\Models\Partner;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -35,5 +38,9 @@ class AppServiceProvider extends ServiceProvider
             'user' => User::class,
             'partner' => Partner::class,
         ]);
+
+        // Protection anti brute-force sur l'authentification — voir
+        // docs/engineering/10-security-guidelines.md §6 (5 tentatives/minute/IP).
+        RateLimiter::for('auth', fn (Request $request) => Limit::perMinute(5)->by($request->ip()));
     }
 }
