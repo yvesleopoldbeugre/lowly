@@ -2,6 +2,7 @@
 
 namespace App\Domains\Identity\Actions;
 
+use App\Domains\Identity\Exceptions\AccountSuspendedException;
 use App\Domains\Identity\Exceptions\InvalidCredentialsException;
 use App\Domains\Identity\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -17,10 +18,16 @@ final class LoginUser
             throw new InvalidCredentialsException;
         }
 
-        request()->session()->regenerate();
-
         /** @var User $user */
         $user = Auth::user();
+
+        if ($user->isSuspended()) {
+            Auth::logout();
+
+            throw new AccountSuspendedException;
+        }
+
+        request()->session()->regenerate();
 
         return $user;
     }
