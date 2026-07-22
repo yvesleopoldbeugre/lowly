@@ -91,6 +91,14 @@ Domaine `Availability` :
 |---|---|
 | `availability_block_overlap` | La période demandée chevauche un blocage existant sur ce bien (contrainte d'exclusion GiST, voir `DATABASE.md` §7.2) |
 
+Domaine `Administration` :
+
+| Code | Situation |
+|---|---|
+| `partner_not_pending` | Un administrateur tente de valider ou rejeter un partenaire déjà dans un état terminal différent (ex : rejeter un partenaire déjà validé) |
+| `listing_not_pending` | Un administrateur tente de valider ou rejeter une annonce déjà dans un état terminal différent |
+| `account_suspended` | Identifiants valides mais compte suspendu par un administrateur (`PATCH /api/v1/admin/users/{id}/suspend`) |
+
 Ces codes sont un contrat stable consommé potentiellement par une interface front ; leur renommage est traité comme un changement non rétrocompatible (§3).
 
 ## 8. Idempotence
