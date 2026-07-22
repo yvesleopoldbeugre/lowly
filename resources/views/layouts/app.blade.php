@@ -18,6 +18,7 @@
                     ['route' => 'partner.residences.index', 'label' => 'Résidences'],
                     ['route' => 'partner.vehicles.index', 'label' => 'Véhicules'],
                     ['route' => 'partner.availability.index', 'label' => 'Disponibilités'],
+                    ['route' => 'partner.reservations.index', 'label' => 'Réservations'],
                 ];
             @endphp
 

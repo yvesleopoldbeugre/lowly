@@ -19,6 +19,9 @@
 
             <div class="flex items-center gap-3">
                 @auth
+                    @if (auth()->user()->isClient())
+                        <a href="{{ route('reservations.index') }}" class="text-sm text-neutral-600 hover:text-neutral-900">Mes réservations</a>
+                    @endif
                     <a href="{{ route('me.show') }}" class="text-sm font-medium text-neutral-700 hover:text-neutral-900">
                         {{ auth()->user()->full_name }}
                     </a>

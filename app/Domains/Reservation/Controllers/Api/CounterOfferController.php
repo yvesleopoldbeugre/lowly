@@ -2,10 +2,12 @@
 
 namespace App\Domains\Reservation\Controllers\Api;
 
+use App\Domains\Reservation\Actions\AccepterContrePropositionAction;
+use App\Domains\Reservation\Actions\RefuserContrePropositionAction;
 use App\Domains\Reservation\Models\CounterOffer;
 use App\Domains\Reservation\Models\Reservation;
+use App\Domains\Reservation\Resources\ReservationResource;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\JsonResponse;
 
 /**
  * Domaine Reservation — voir API_GUIDE.md §10, BUSINESS_RULES.md §6
@@ -13,13 +15,17 @@ use Illuminate\Http\JsonResponse;
  */
 class CounterOfferController extends Controller
 {
-    public function accept(Reservation $reservation, CounterOffer $counterOffer): JsonResponse
+    public function accept(Reservation $reservation, CounterOffer $counterOffer, AccepterContrePropositionAction $action): ReservationResource
     {
-        abort(501, 'Non implémenté — voir API_GUIDE.md §10 (.../counter-offers/{offerId}/accept).');
+        $this->authorize('respond', $counterOffer);
+
+        return ReservationResource::make($action->executer($counterOffer));
     }
 
-    public function reject(Reservation $reservation, CounterOffer $counterOffer): JsonResponse
+    public function reject(Reservation $reservation, CounterOffer $counterOffer, RefuserContrePropositionAction $action): ReservationResource
     {
-        abort(501, 'Non implémenté — voir API_GUIDE.md §10 (.../counter-offers/{offerId}/reject).');
+        $this->authorize('respond', $counterOffer);
+
+        return ReservationResource::make($action->executer($counterOffer));
     }
 }

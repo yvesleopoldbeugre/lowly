@@ -6,6 +6,7 @@ use App\Domains\Identity\Models\User;
 use App\Domains\Reservation\Models\Reservation;
 use App\Support\Casts\PostgresDateRange;
 use Database\Factories\AvailabilityBlockFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -63,6 +64,22 @@ class AvailabilityBlock extends Model
     public function isFromReservation(): bool
     {
         return $this->origin === 'reservation';
+    }
+
+    /**
+     * Blocages existants chevauchant `$period` sur un bien donné — utilisé
+     * pour la vérification "douce" de disponibilité avant qu'un blocage ne
+     * soit réellement posé (BUSINESS_RULES.md §5.1, §6.2), la contrainte
+     * d'exclusion GiST restant la seule garantie dure à l'écriture.
+     *
+     * @param  array{start: mixed, end: mixed}  $period
+     */
+    public function scopeOverlapping(Builder $query, string $blockableType, string $blockableId, array $period): Builder
+    {
+        return $query
+            ->where('blockable_type', $blockableType)
+            ->where('blockable_id', $blockableId)
+            ->whereRaw('period && daterange(?, ?)', [$period['start'], $period['end']]);
     }
 
     protected static function newFactory(): AvailabilityBlockFactory

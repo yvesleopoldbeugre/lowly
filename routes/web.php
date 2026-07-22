@@ -9,6 +9,8 @@ use App\Domains\Catalogue\Controllers\Web\VehicleController;
 use App\Domains\Identity\Controllers\Web\AuthController;
 use App\Domains\Identity\Controllers\Web\ProfileController;
 use App\Domains\Partners\Controllers\Web\DashboardController;
+use App\Domains\Partners\Controllers\Web\PartnerReservationController;
+use App\Domains\Reservation\Controllers\Web\ReservationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -33,6 +35,11 @@ Route::get('register', [AuthController::class, 'showRegister'])->middleware('gue
 
 Route::get('me', [ProfileController::class, 'show'])->middleware('auth')->name('me.show');
 
+Route::middleware(['auth', 'role:client'])->group(function () {
+    Route::get('reservations', [ReservationController::class, 'index'])->name('reservations.index');
+    Route::get('reservations/{reservation}', [ReservationController::class, 'show'])->name('reservations.show');
+});
+
 Route::middleware(['auth', 'role:partner'])->prefix('partner')->name('partner.')->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -45,4 +52,7 @@ Route::middleware(['auth', 'role:partner'])->prefix('partner')->name('partner.')
     Route::get('vehicles/{vehicle}/edit', [PartnerVehicleController::class, 'edit'])->name('vehicles.edit');
 
     Route::get('availability', [PartnerAvailabilityController::class, 'index'])->name('availability.index');
+
+    Route::get('reservations', [PartnerReservationController::class, 'index'])->name('reservations.index');
+    Route::get('reservations/{reservation}', [PartnerReservationController::class, 'show'])->name('reservations.show');
 });
