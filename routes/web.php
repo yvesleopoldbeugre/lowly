@@ -1,5 +1,10 @@
 <?php
 
+use App\Domains\Administration\Controllers\Web\AdminListingController;
+use App\Domains\Administration\Controllers\Web\AdminPartnerController;
+use App\Domains\Administration\Controllers\Web\AdminSettingController;
+use App\Domains\Administration\Controllers\Web\AdminStatisticController;
+use App\Domains\Administration\Controllers\Web\AdminUserController;
 use App\Domains\Availability\Controllers\Web\PartnerAvailabilityController;
 use App\Domains\Catalogue\Controllers\Web\PartnerResidenceController;
 use App\Domains\Catalogue\Controllers\Web\PartnerVehicleController;
@@ -55,4 +60,12 @@ Route::middleware(['auth', 'role:partner'])->prefix('partner')->name('partner.')
 
     Route::get('reservations', [PartnerReservationController::class, 'index'])->name('reservations.index');
     Route::get('reservations/{reservation}', [PartnerReservationController::class, 'show'])->name('reservations.show');
+});
+
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('partners', [AdminPartnerController::class, 'index'])->name('partners.index');
+    Route::get('listings', [AdminListingController::class, 'index'])->name('listings.index');
+    Route::get('users', [AdminUserController::class, 'index'])->name('users.index');
+    Route::get('statistics', [AdminStatisticController::class, 'index'])->name('statistics.index');
+    Route::get('settings', [AdminSettingController::class, 'index'])->name('settings.index');
 });
