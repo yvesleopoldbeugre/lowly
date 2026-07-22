@@ -9,6 +9,7 @@ import './alpine/availability-calendar.js';
 import './alpine/reservation-request.js';
 import './alpine/counter-offer-response.js';
 import './alpine/partner-reservation-response.js';
+import './alpine/notification-read.js';
 
 window.Alpine = Alpine;
 Alpine.start();

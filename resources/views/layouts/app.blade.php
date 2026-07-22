@@ -38,6 +38,12 @@
             <h1 class="text-lg font-semibold text-neutral-900">{{ $title ?? '' }}</h1>
 
             <div class="flex items-center gap-3">
+                <a href="{{ route('notifications.index') }}" class="relative text-sm text-neutral-600 hover:text-neutral-900">
+                    🔔
+                    @if ($unreadNotificationsCount > 0)
+                        <x-ui.badge variant="danger" class="absolute -right-2 -top-2 !px-1.5">{{ $unreadNotificationsCount }}</x-ui.badge>
+                    @endif
+                </a>
                 <span class="text-sm text-neutral-600">{{ auth()->user()->full_name }}</span>
                 <span class="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 text-sm font-medium text-primary-700">
                     {{ Str::substr(auth()->user()->full_name, 0, 1) }}

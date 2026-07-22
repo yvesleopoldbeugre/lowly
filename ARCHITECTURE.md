@@ -247,7 +247,7 @@ Les jobs doivent être idempotents et documentés dans `docs/engineering/07-java
 
 ## 12. Notifications
 
-Le domaine `Communication` centralise l'émission des notifications, qu'elles soient in-app, email, ou (post-MVP) SMS. Chaque notification est déclenchée par un événement métier et suit un template dédié. La liste exhaustive des notifications du MVP :
+Le domaine `Communication` centralise l'émission des notifications. Le canal **in-app** (table `notifications`, voir `DATABASE.md` §9.1) est le seul implémenté en Phase 1 MVP — chaque notification est déclenchée par un événement métier via un listener dédié (ex : `NotifierConfirmation` sur `ReservationConfirmee`). L'email et le SMS, envisagés à terme, ne sont pas construits (pas de configuration Mail, pas de Mailable) et sont différés à une tranche ultérieure explicite si demandé. La liste exhaustive des notifications du MVP :
 
 - nouvelle demande de réservation (au partenaire) ;
 - réservation confirmée (au client) ;

@@ -24,6 +24,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -81,5 +82,25 @@ class AppServiceProvider extends ServiceProvider
 
         Event::listen(ContrePropositionExpiree::class, [EnregistrerHistorique::class, 'contrePropositionExpiree']);
         Event::listen(ContrePropositionExpiree::class, NotifierExpiration::class);
+
+        // Compteur de notifications non lues partagé par les deux layouts
+        // (la cloche concerne tout utilisateur authentifié, client ou
+        // partenaire) — centralisé ici plutôt que dans chaque contrôleur Web.
+        // Filtre sur le chemin de fichier plutôt que le nom de vue : les
+        // composants anonymes enregistrés via Blade::anonymousComponentPath
+        // ci-dessus résolvent vers un espace de noms interne haché
+        // (BladeCompiler::newComponentHash), pas vers un nom "layouts.*"
+        // ou "layouts::*" exploitable par View::composer().
+        View::composer('*', function ($view): void {
+            if (! str_ends_with($view->getPath(), 'layouts/guest.blade.php')
+                && ! str_ends_with($view->getPath(), 'layouts/app.blade.php')) {
+                return;
+            }
+
+            $view->with(
+                'unreadNotificationsCount',
+                auth()->user()?->notifications()->whereNull('read_at')->count() ?? 0,
+            );
+        });
     }
 }

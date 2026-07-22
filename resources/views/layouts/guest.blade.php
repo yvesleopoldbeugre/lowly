@@ -22,6 +22,12 @@
                     @if (auth()->user()->isClient())
                         <a href="{{ route('reservations.index') }}" class="text-sm text-neutral-600 hover:text-neutral-900">Mes réservations</a>
                     @endif
+                    <a href="{{ route('notifications.index') }}" class="relative text-sm text-neutral-600 hover:text-neutral-900">
+                        🔔
+                        @if ($unreadNotificationsCount > 0)
+                            <x-ui.badge variant="danger" class="absolute -right-2 -top-2 !px-1.5">{{ $unreadNotificationsCount }}</x-ui.badge>
+                        @endif
+                    </a>
                     <a href="{{ route('me.show') }}" class="text-sm font-medium text-neutral-700 hover:text-neutral-900">
                         {{ auth()->user()->full_name }}
                     </a>
