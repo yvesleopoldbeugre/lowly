@@ -21,6 +21,10 @@ class ReservationStatusHistory extends Model
 
     public $timestamps = false;
 
+    // La pluralisation Eloquent par défaut donnerait "reservation_status_histories" ;
+    // la table (DATABASE.md §8.2) garde "history" au singulier.
+    protected $table = 'reservation_status_history';
+
     protected $fillable = [
         'reservation_id',
         'previous_status',

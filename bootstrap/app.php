@@ -26,6 +26,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => EnsureUserHasRole::class,
         ]);
+
+        // Le middleware `auth` intégré redirige par défaut vers une route
+        // nommée littéralement `login`, ce qui ne correspond pas à la
+        // convention de nommage du projet (`login.show`, voir routes/web.php).
+        $middleware->redirectGuestsTo(fn () => route('login.show'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
