@@ -2,13 +2,17 @@
 
 namespace App\Providers;
 
+use App\Domains\Administration\Events\AnnonceValidee;
+use App\Domains\Administration\Events\PartenaireValide;
 use App\Domains\Availability\Listeners\BloquerCalendrier;
 use App\Domains\Catalogue\Models\Residence;
 use App\Domains\Catalogue\Models\Vehicle;
+use App\Domains\Communication\Listeners\NotifierAnnonceValidee;
 use App\Domains\Communication\Listeners\NotifierConfirmation;
 use App\Domains\Communication\Listeners\NotifierContrePropositionRecue;
 use App\Domains\Communication\Listeners\NotifierExpiration;
 use App\Domains\Communication\Listeners\NotifierNouvelleDemande;
+use App\Domains\Communication\Listeners\NotifierPartenaireValidation;
 use App\Domains\Communication\Listeners\NotifierRefus;
 use App\Domains\Identity\Models\User;
 use App\Domains\Partners\Models\Partner;
@@ -81,5 +85,8 @@ class AppServiceProvider extends ServiceProvider
 
         Event::listen(ContrePropositionExpiree::class, [EnregistrerHistorique::class, 'contrePropositionExpiree']);
         Event::listen(ContrePropositionExpiree::class, NotifierExpiration::class);
+
+        Event::listen(PartenaireValide::class, NotifierPartenaireValidation::class);
+        Event::listen(AnnonceValidee::class, NotifierAnnonceValidee::class);
     }
 }
