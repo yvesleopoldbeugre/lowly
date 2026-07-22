@@ -2,29 +2,33 @@
 
 namespace App\Domains\Administration\Controllers\Api;
 
+use App\Domains\Administration\Actions\ListPendingPartners;
+use App\Domains\Administration\Actions\RejeterPartenaireAction;
+use App\Domains\Administration\Actions\ValiderPartenaireAction;
 use App\Domains\Administration\Requests\RejectPartnerRequest;
 use App\Domains\Partners\Models\Partner;
+use App\Domains\Partners\Resources\PartnerResource;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /**
  * Domaine Administration — voir API_GUIDE.md §12, UX_UI.md §7.1.
  */
 class AdminPartnerController extends Controller
 {
-    public function pending(Request $request): JsonResponse
+    public function pending(Request $request, ListPendingPartners $action): AnonymousResourceCollection
     {
-        abort(501, 'Non implémenté — voir API_GUIDE.md §12 (GET /api/v1/admin/partners/pending).');
+        return PartnerResource::collection($action->executer(['per_page' => $request->integer('per_page')]));
     }
 
-    public function validatePartner(Partner $partner): JsonResponse
+    public function validatePartner(Partner $partner, Request $request, ValiderPartenaireAction $action): PartnerResource
     {
-        abort(501, 'Non implémenté — voir API_GUIDE.md §12 (POST /api/v1/admin/partners/{id}/validate).');
+        return PartnerResource::make($action->executer($partner, $request->user()));
     }
 
-    public function reject(RejectPartnerRequest $request, Partner $partner): JsonResponse
+    public function reject(RejectPartnerRequest $request, Partner $partner, RejeterPartenaireAction $action): PartnerResource
     {
-        abort(501, 'Non implémenté — voir API_GUIDE.md §12 (POST /api/v1/admin/partners/{id}/reject).');
+        return PartnerResource::make($action->executer($partner, $request->user(), $request->validated()));
     }
 }

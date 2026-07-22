@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? 'LOWLY' }} — Espace partenaire</title>
+    <title>{{ $title ?? 'LOWLY' }} — {{ auth()->user()->isAdmin() ? 'Espace administration' : 'Espace partenaire' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="flex min-h-screen bg-neutral-50 font-sans text-neutral-900">
@@ -13,13 +13,21 @@
 
         <nav class="flex flex-col gap-1 text-sm">
             @php
-                $navItems = [
-                    ['route' => 'partner.dashboard', 'label' => 'Tableau de bord'],
-                    ['route' => 'partner.residences.index', 'label' => 'Résidences'],
-                    ['route' => 'partner.vehicles.index', 'label' => 'Véhicules'],
-                    ['route' => 'partner.availability.index', 'label' => 'Disponibilités'],
-                    ['route' => 'partner.reservations.index', 'label' => 'Réservations'],
-                ];
+                $navItems = auth()->user()->isAdmin()
+                    ? [
+                        ['route' => 'admin.partners.index', 'label' => 'Partenaires'],
+                        ['route' => 'admin.listings.index', 'label' => 'Annonces'],
+                        ['route' => 'admin.users.index', 'label' => 'Utilisateurs'],
+                        ['route' => 'admin.statistics.index', 'label' => 'Statistiques'],
+                        ['route' => 'admin.settings.index', 'label' => 'Paramètres'],
+                    ]
+                    : [
+                        ['route' => 'partner.dashboard', 'label' => 'Tableau de bord'],
+                        ['route' => 'partner.residences.index', 'label' => 'Résidences'],
+                        ['route' => 'partner.vehicles.index', 'label' => 'Véhicules'],
+                        ['route' => 'partner.availability.index', 'label' => 'Disponibilités'],
+                        ['route' => 'partner.reservations.index', 'label' => 'Réservations'],
+                    ];
             @endphp
 
             @foreach ($navItems as $item)

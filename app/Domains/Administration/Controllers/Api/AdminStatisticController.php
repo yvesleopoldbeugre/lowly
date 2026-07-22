@@ -2,6 +2,7 @@
 
 namespace App\Domains\Administration\Controllers\Api;
 
+use App\Domains\Administration\Actions\GetPlatformStatistics;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -12,8 +13,13 @@ use Illuminate\Http\Request;
  */
 class AdminStatisticController extends Controller
 {
-    public function index(Request $request): JsonResponse
+    public function index(Request $request, GetPlatformStatistics $action): JsonResponse
     {
-        abort(501, 'Non implémenté — voir API_GUIDE.md §12 (GET /api/v1/admin/statistics).');
+        return response()->json([
+            'data' => [
+                'type' => 'statistics',
+                'attributes' => $action->executer(),
+            ],
+        ]);
     }
 }
