@@ -2,13 +2,14 @@
 
 namespace App\Domains\Reservation\Resources;
 
+use App\Domains\Reservation\Models\Reservation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * Domaine Reservation — format conforme à API_GUIDE.md §6.2.
  *
- * @mixin \App\Domains\Reservation\Models\Reservation
+ * @mixin Reservation
  */
 class ReservationResource extends JsonResource
 {
@@ -35,6 +36,10 @@ class ReservationResource extends JsonResource
                 'parent_reservation' => $this->when(
                     $this->parent_reservation_id !== null,
                     fn () => ['id' => $this->parent_reservation_id, 'type' => 'reservation']
+                ),
+                'counter_offer' => $this->whenLoaded(
+                    'counterOffer',
+                    fn () => $this->counterOffer ? CounterOfferResource::make($this->counterOffer) : null,
                 ),
             ],
         ];

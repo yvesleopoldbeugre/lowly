@@ -2,29 +2,39 @@
 
 namespace App\Domains\Reservation\Controllers\Api;
 
+use App\Domains\Reservation\Actions\CreerDemandeReservationAction;
+use App\Domains\Reservation\Actions\ListClientReservations;
 use App\Domains\Reservation\Models\Reservation;
 use App\Domains\Reservation\Requests\StoreReservationRequest;
+use App\Domains\Reservation\Resources\ReservationResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /**
  * Domaine Reservation — voir API_GUIDE.md §10, BUSINESS_RULES.md §5.
  */
 class ReservationController extends Controller
 {
-    public function store(StoreReservationRequest $request): JsonResponse
+    public function store(StoreReservationRequest $request, CreerDemandeReservationAction $action): JsonResponse
     {
-        abort(501, 'Non implémenté — voir API_GUIDE.md §10 (POST /api/v1/reservations).');
+        $reservation = $action->executer($request->user(), $request->validated());
+
+        return ReservationResource::make($reservation)->response()->setStatusCode(201);
     }
 
-    public function index(Request $request): JsonResponse
+    public function index(Request $request, ListClientReservations $action): AnonymousResourceCollection
     {
-        abort(501, 'Non implémenté — voir API_GUIDE.md §10 (GET /api/v1/reservations).');
+        return ReservationResource::collection(
+            $action->executer($request->user(), ['per_page' => $request->integer('per_page')])
+        );
     }
 
-    public function show(Reservation $reservation): JsonResponse
+    public function show(Reservation $reservation): ReservationResource
     {
-        abort(501, 'Non implémenté — voir API_GUIDE.md §10 (GET /api/v1/reservations/{id}).');
+        $this->authorize('view', $reservation);
+
+        return ReservationResource::make($reservation->load('counterOffer'));
     }
 }
