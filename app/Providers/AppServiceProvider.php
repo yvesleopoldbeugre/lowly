@@ -2,14 +2,27 @@
 
 namespace App\Providers;
 
+use App\Domains\Availability\Listeners\BloquerCalendrier;
 use App\Domains\Catalogue\Models\Residence;
 use App\Domains\Catalogue\Models\Vehicle;
+use App\Domains\Communication\Listeners\NotifierConfirmation;
+use App\Domains\Communication\Listeners\NotifierContrePropositionRecue;
+use App\Domains\Communication\Listeners\NotifierExpiration;
+use App\Domains\Communication\Listeners\NotifierNouvelleDemande;
+use App\Domains\Communication\Listeners\NotifierRefus;
 use App\Domains\Identity\Models\User;
 use App\Domains\Partners\Models\Partner;
+use App\Domains\Reservation\Events\ContrePropositionExpiree;
+use App\Domains\Reservation\Events\ContrePropositionSoumise;
+use App\Domains\Reservation\Events\DemandeReservationCreee;
+use App\Domains\Reservation\Events\ReservationConfirmee;
+use App\Domains\Reservation\Events\ReservationRefusee;
+use App\Domains\Reservation\Listeners\EnregistrerHistorique;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
@@ -49,5 +62,24 @@ class AppServiceProvider extends ServiceProvider
         // par docs/engineering/06-blade-tailwind-guidelines.md §4), mais
         // utilisable avec la même syntaxe de composant anonyme.
         Blade::anonymousComponentPath(resource_path('views/layouts'), 'layouts');
+
+        // Communication inter-domaines exclusivement par événements — voir
+        // ARCHITECTURE.md §9. Les listeners vivent dans le domaine qui
+        // réagit (pas d'auto-discovery depuis app/Listeners), enregistrés
+        // ici explicitement.
+        Event::listen(DemandeReservationCreee::class, NotifierNouvelleDemande::class);
+
+        Event::listen(ReservationConfirmee::class, [EnregistrerHistorique::class, 'confirmee']);
+        Event::listen(ReservationConfirmee::class, BloquerCalendrier::class);
+        Event::listen(ReservationConfirmee::class, NotifierConfirmation::class);
+
+        Event::listen(ReservationRefusee::class, [EnregistrerHistorique::class, 'refusee']);
+        Event::listen(ReservationRefusee::class, NotifierRefus::class);
+
+        Event::listen(ContrePropositionSoumise::class, [EnregistrerHistorique::class, 'contrePropositionSoumise']);
+        Event::listen(ContrePropositionSoumise::class, NotifierContrePropositionRecue::class);
+
+        Event::listen(ContrePropositionExpiree::class, [EnregistrerHistorique::class, 'contrePropositionExpiree']);
+        Event::listen(ContrePropositionExpiree::class, NotifierExpiration::class);
     }
 }

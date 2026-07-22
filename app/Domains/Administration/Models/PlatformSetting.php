@@ -37,4 +37,16 @@ class PlatformSetting extends Model
     {
         return PlatformSettingFactory::new();
     }
+
+    /**
+     * Lit un délai (en heures) depuis une ligne `{"hours": n}` — voir
+     * BUSINESS_RULES.md §6.2 (délai de réponse à une contre-proposition,
+     * configurable en plateforme, aucune valeur n'étant fixée par les
+     * règles métier elles-mêmes). `$default` ne sert que si la ligne
+     * n'existe pas en base, jamais comme substitut à une valeur configurée.
+     */
+    public static function hours(string $key, int $default): int
+    {
+        return (int) (self::where('key', $key)->first()?->value['hours'] ?? $default);
+    }
 }

@@ -17,7 +17,10 @@ return new class extends Migration
             $table->foreignUuid('reservation_id')->constrained('reservations')->cascadeOnDelete();
             $table->string('previous_status', 30)->nullable();
             $table->string('new_status', 30);
-            $table->foreignUuid('changed_by')->constrained('users');
+            // Nullable : une transition déclenchée par le job planifié
+            // d'expiration (voir BUSINESS_RULES.md §6.2) n'a pas d'auteur
+            // humain — voir ExpirerContrePropositionsAction.
+            $table->foreignUuid('changed_by')->nullable()->constrained('users');
             $table->timestamp('changed_at');
         });
     }

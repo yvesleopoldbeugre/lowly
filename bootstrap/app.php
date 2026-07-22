@@ -5,6 +5,7 @@ use App\Support\Exceptions\ApiError;
 use App\Support\Exceptions\ApiErrorResponse;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -31,6 +32,12 @@ return Application::configure(basePath: dirname(__DIR__))
         // nommée littéralement `login`, ce qui ne correspond pas à la
         // convention de nommage du projet (`login.show`, voir routes/web.php).
         $middleware->redirectGuestsTo(fn () => route('login.show'));
+    })
+    ->withSchedule(function (Schedule $schedule): void {
+        // BUSINESS_RULES.md §6.2 : expiration des contre-propositions non
+        // traitées dans le délai configuré (`platform_settings`). Le service
+        // `scheduler` du docker-compose.yml exécute déjà `schedule:work`.
+        $schedule->command('reservations:expire-counter-offers')->everyFifteenMinutes();
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
