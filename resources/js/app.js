@@ -13,6 +13,7 @@ import './alpine/admin-partner-review.js';
 import './alpine/admin-listing-review.js';
 import './alpine/admin-user-suspend.js';
 import './alpine/admin-settings-form.js';
+import './alpine/notification-read.js';
 
 window.Alpine = Alpine;
 Alpine.start();

@@ -11,6 +11,7 @@ use App\Domains\Catalogue\Controllers\Web\PartnerVehicleController;
 use App\Domains\Catalogue\Controllers\Web\ResidenceController;
 use App\Domains\Catalogue\Controllers\Web\SearchController;
 use App\Domains\Catalogue\Controllers\Web\VehicleController;
+use App\Domains\Communication\Controllers\Web\NotificationController;
 use App\Domains\Identity\Controllers\Web\AuthController;
 use App\Domains\Identity\Controllers\Web\ProfileController;
 use App\Domains\Partners\Controllers\Web\DashboardController;
@@ -39,6 +40,7 @@ Route::get('login', [AuthController::class, 'showLogin'])->middleware('guest')->
 Route::get('register', [AuthController::class, 'showRegister'])->middleware('guest')->name('register.show');
 
 Route::get('me', [ProfileController::class, 'show'])->middleware('auth')->name('me.show');
+Route::get('notifications', [NotificationController::class, 'index'])->middleware('auth')->name('notifications.index');
 
 Route::middleware(['auth', 'role:client'])->group(function () {
     Route::get('reservations', [ReservationController::class, 'index'])->name('reservations.index');
