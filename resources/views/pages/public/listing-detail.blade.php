@@ -51,17 +51,36 @@
                     {{ number_format($listing->daily_rate, 0, ',', ' ') }} FCFA / jour
                 </p>
 
-                <div class="mt-4 grid grid-cols-2 gap-2">
-                    <x-ui.input label="Arrivée" type="date" name="start_date" />
-                    <x-ui.input label="Départ" type="date" name="end_date" />
-                </div>
+                @auth
+                    @if (auth()->user()->isClient())
+                        <div x-data="reservationRequest('{{ $type }}', '{{ $listing->id }}', {{ $listing->daily_rate }})">
+                            <div class="mt-4 grid grid-cols-2 gap-2">
+                                <x-ui.input label="Arrivée" type="date" x-model="start_date" />
+                                <x-ui.input label="Départ" type="date" x-model="end_date" />
+                            </div>
 
-                <x-ui.button disabled class="mt-4 w-full justify-center" title="Bientôt disponible — domaine Reservation à venir">
-                    Demander à réserver
-                </x-ui.button>
-                <p class="mt-2 text-xs text-neutral-500">
-                    Aucun prélèvement à cette étape — validation du partenaire requise. Fonctionnalité à venir.
-                </p>
+                            <template x-if="nightsCount > 0">
+                                <p class="mt-2 text-xs text-neutral-500">
+                                    <span x-text="nightsCount"></span> journée(s) — <span x-text="totalAmount.toLocaleString('fr-FR')"></span> FCFA (estimation)
+                                </p>
+                            </template>
+
+                            <template x-if="errors.start_date || errors.end_date"><p class="mt-2 text-xs text-danger-600">Période invalide.</p></template>
+                            <template x-if="generalError"><p class="mt-2 text-xs text-danger-600" x-text="generalError"></p></template>
+
+                            <x-ui.button x-bind:disabled="loading || nightsCount < 1" @click="submit()" class="mt-4 w-full justify-center">
+                                Demander à réserver
+                            </x-ui.button>
+                            <p class="mt-2 text-xs text-neutral-500">
+                                Aucun prélèvement à cette étape — validation du partenaire requise.
+                            </p>
+                        </div>
+                    @else
+                        <p class="mt-4 text-sm text-neutral-500">La réservation est réservée aux comptes clients.</p>
+                    @endif
+                @else
+                    <x-ui.button href="{{ route('login.show') }}" class="mt-4 w-full justify-center">Se connecter pour réserver</x-ui.button>
+                @endauth
             </aside>
         </div>
     </div>

@@ -19,14 +19,10 @@
         @endforeach
     </div>
 
-    <p class="mt-6 text-sm text-neutral-500">
-        Les statistiques de réservation (demandes en attente, réservations à venir, taux d'acceptation)
-        seront ajoutées avec le domaine Reservation.
-    </p>
-
     <div class="mt-8 flex gap-3">
         <x-ui.button href="{{ route('partner.residences.index') }}" variant="secondary">Gérer mes résidences</x-ui.button>
         <x-ui.button href="{{ route('partner.vehicles.index') }}" variant="secondary">Gérer mes véhicules</x-ui.button>
         <x-ui.button href="{{ route('partner.availability.index') }}" variant="secondary">Disponibilités</x-ui.button>
+        <x-ui.button href="{{ route('partner.reservations.index') }}" variant="secondary">Réservations</x-ui.button>
     </div>
 </x-layouts::app>
